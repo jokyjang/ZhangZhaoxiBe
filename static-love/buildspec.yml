@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: openjdk8
   build:
     commands:
       - aws s3 cp ./static-love/src/main/resources s3://love.zhangzhaoxi.be --recursive
