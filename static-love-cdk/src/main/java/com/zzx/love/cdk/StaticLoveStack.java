@@ -1,5 +1,6 @@
 package com.zzx.love.cdk;
 
+import software.amazon.awscdk.core.Aws;
 import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.core.SecretValue;
 import software.amazon.awscdk.core.SecretsManagerSecretOptions;
@@ -20,6 +21,7 @@ import software.amazon.awscdk.services.codepipeline.actions.CodeBuildAction;
 import software.amazon.awscdk.services.codepipeline.actions.CodeBuildActionProps;
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceAction;
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceActionProps;
+import software.amazon.awscdk.services.iam.AccountPrincipal;
 import software.amazon.awscdk.services.iam.AnyPrincipal;
 import software.amazon.awscdk.services.iam.Effect;
 import software.amazon.awscdk.services.iam.ManagedPolicy;
@@ -136,6 +138,7 @@ public class StaticLoveStack extends Stack {
                 .build()))
             .role(new Role(this, "StaticLoveBuildActionRole", RoleProps.builder()
                 .roleName("StaticLoveBuildActionRole")
+                .assumedBy(new AccountPrincipal(Aws.ACCOUNT_ID))
                 .build()))
             .build());
 
@@ -149,6 +152,7 @@ public class StaticLoveStack extends Stack {
             .stages(Arrays.asList(sourceStage, buildStage))
             .role(new Role(this, "StaticLovePipelineRole", RoleProps.builder()
                 .roleName("StaticLovePipelineRole")
+                .assumedBy(new ServicePrincipal("codepipeline.amazonaws.com"))
                 .build()))
             .build()
         );
