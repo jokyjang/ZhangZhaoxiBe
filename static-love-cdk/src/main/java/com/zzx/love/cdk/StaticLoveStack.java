@@ -77,4 +77,9 @@ public class StaticLoveStack extends Stack {
             .build()
         );
     }
+
+    // CI/CD system for deploying static content to S3
+    private void createCodeBuildProject() {
+
+    }
 }
