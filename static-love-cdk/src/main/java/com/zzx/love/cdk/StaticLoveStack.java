@@ -8,22 +8,16 @@ import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.codebuild.BuildEnvironment;
 import software.amazon.awscdk.services.codebuild.BuildSpec;
 import software.amazon.awscdk.services.codebuild.ComputeType;
-import software.amazon.awscdk.services.codebuild.GitHubSourceProps;
 import software.amazon.awscdk.services.codebuild.LinuxBuildImage;
 import software.amazon.awscdk.services.codebuild.PipelineProject;
 import software.amazon.awscdk.services.codebuild.PipelineProjectProps;
-import software.amazon.awscdk.services.codebuild.Project;
-import software.amazon.awscdk.services.codebuild.ProjectProps;
-import software.amazon.awscdk.services.codebuild.Source;
 import software.amazon.awscdk.services.codepipeline.Artifact;
 import software.amazon.awscdk.services.codepipeline.IAction;
-import software.amazon.awscdk.services.codepipeline.IStage;
 import software.amazon.awscdk.services.codepipeline.Pipeline;
 import software.amazon.awscdk.services.codepipeline.PipelineProps;
 import software.amazon.awscdk.services.codepipeline.StageProps;
 import software.amazon.awscdk.services.codepipeline.actions.CodeBuildAction;
 import software.amazon.awscdk.services.codepipeline.actions.CodeBuildActionProps;
-import software.amazon.awscdk.services.codepipeline.actions.CodeBuildActionType;
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceAction;
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceActionProps;
 import software.amazon.awscdk.services.iam.AnyPrincipal;
@@ -133,15 +127,15 @@ public class StaticLoveStack extends Stack {
                 .environment(BuildEnvironment.builder()
                     .computeType(ComputeType.SMALL)
                     .buildImage(LinuxBuildImage.STANDARD_2_0)
-                    // TODO add environment variables for target s3 bucket
                     .build())
                 .role(new Role(this, "StaticLoveProjectRole", RoleProps.builder()
                     .roleName("StaticLoveProjectRole")
                     .assumedBy(new ServicePrincipal("codebuild.amazonaws.com"))
-                    .managedPolicies(Arrays.asList(
-                        ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"),
-                        ManagedPolicy.fromAwsManagedPolicyName("CloudWatchLogsFullAccess")))
+                    .managedPolicies(Collections.singletonList(ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess")))
                     .build()))
+                .build()))
+            .role(new Role(this, "StaticLoveBuildActionRole", RoleProps.builder()
+                .roleName("StaticLoveBuildActionRole")
                 .build()))
             .build());
 
@@ -153,6 +147,9 @@ public class StaticLoveStack extends Stack {
         new Pipeline(this, "StaticLovePipeline", PipelineProps.builder()
             .pipelineName("StaticLove")
             .stages(Arrays.asList(sourceStage, buildStage))
+            .role(new Role(this, "StaticLovePipelineRole", RoleProps.builder()
+                .roleName("StaticLovePipelineRole")
+                .build()))
             .build()
         );
     }
