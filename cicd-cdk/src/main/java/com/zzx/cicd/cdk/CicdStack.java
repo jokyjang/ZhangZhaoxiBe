@@ -1,4 +1,4 @@
-package com.zzx.love.cdk;
+package com.zzx.cicd.cdk;
 
 import software.amazon.awscdk.core.Aws;
 import software.amazon.awscdk.core.Construct;
@@ -22,88 +22,26 @@ import software.amazon.awscdk.services.codepipeline.actions.CodeBuildActionProps
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceAction;
 import software.amazon.awscdk.services.codepipeline.actions.GitHubSourceActionProps;
 import software.amazon.awscdk.services.iam.AccountPrincipal;
-import software.amazon.awscdk.services.iam.AnyPrincipal;
-import software.amazon.awscdk.services.iam.Effect;
 import software.amazon.awscdk.services.iam.ManagedPolicy;
-import software.amazon.awscdk.services.iam.PolicyStatement;
-import software.amazon.awscdk.services.iam.PolicyStatementProps;
 import software.amazon.awscdk.services.iam.Role;
 import software.amazon.awscdk.services.iam.RoleProps;
 import software.amazon.awscdk.services.iam.ServicePrincipal;
-import software.amazon.awscdk.services.route53.ARecord;
-import software.amazon.awscdk.services.route53.ARecordProps;
-import software.amazon.awscdk.services.route53.HostedZone;
-import software.amazon.awscdk.services.route53.HostedZoneProviderProps;
-import software.amazon.awscdk.services.route53.RecordTarget;
-import software.amazon.awscdk.services.route53.targets.BucketWebsiteTarget;
-import software.amazon.awscdk.services.s3.Bucket;
-import software.amazon.awscdk.services.s3.BucketProps;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-/**
- * This is a stack that creates a sub-domain love.{domain_name} and optional
- * www.love.{domain_name} along with the S3 buckets corresponding to the
- * sub-domains as static website.
- */
-public class StaticLoveStack extends Stack {
-    private static final String DOMAIN_NAME = "zhangzhaoxi.be";
-    private static final String SUB_DOMAIN_NAME = "love." + DOMAIN_NAME;
+public class CicdStack extends Stack {
 
-    public StaticLoveStack(Construct parent, String id, StackProps props) {
+    public CicdStack(Construct parent, String id, StackProps props) {
         super(parent, id, props);
         init();
     }
 
     private void init() {
-        Bucket bucket = createStaticWebsiteBucket();
-        createRoute53Record(bucket);
         createCodeBuildProject();
     }
 
-    private Bucket createStaticWebsiteBucket() {
-        String bucketName = SUB_DOMAIN_NAME;
-        Bucket bucket = new Bucket(
-            this,
-            "StaticWebsiteBucket",
-            BucketProps.builder()
-                .bucketName(bucketName)
-                .websiteIndexDocument("index.html")
-                .websiteErrorDocument("error.html")
-                .build()
-        );
-
-        PolicyStatement policyStatement = new PolicyStatement(PolicyStatementProps.builder()
-            .effect(Effect.ALLOW)
-            .principals(Collections.singletonList(new AnyPrincipal()))
-            .actions(Collections.singletonList("s3:GetObject"))
-            .resources(Collections.singletonList("arn:aws:s3:::" + bucketName + "/*"))
-            .build()
-        );
-
-        bucket.addToResourcePolicy(policyStatement);
-
-        return bucket;
-    }
-
-    private void createWwwStaticWebsiteBucket() {
-
-    }
-
-    private void createRoute53Record(Bucket bucket) {
-        new ARecord(this, "LoveRecordSet", ARecordProps.builder()
-            .zone(HostedZone.fromLookup(this, "HostedZone", HostedZoneProviderProps.builder()
-                .domainName(DOMAIN_NAME)
-                .build()))
-            .recordName("love")
-            // TODO bug report at https://github.com/aws/aws-cdk/issues/3928
-            .target(RecordTarget.fromAlias(new BucketWebsiteTarget(bucket)))
-            .build()
-        );
-    }
-
-    // CI/CD system for deploying static content to S3
+    // CI/CD system for deploying the project to the target domain
     private void createCodeBuildProject() {
         IAction githubSourceAction = new GitHubSourceAction(GitHubSourceActionProps.builder()
             .actionName("Source")
@@ -123,21 +61,21 @@ public class StaticLoveStack extends Stack {
         IAction codeBuildAction = new CodeBuildAction(CodeBuildActionProps.builder()
             .actionName("Build")
             .input(Artifact.artifact("Source"))
-            .project(new PipelineProject(this, "StaticLoveProject", PipelineProjectProps.builder()
-                .buildSpec(BuildSpec.fromSourceFilename("./static-love/buildspec.yml"))
-                .projectName("StaticLoveProjectBuild")
+            .project(new PipelineProject(this, "LoveProject", PipelineProjectProps.builder()
+                .buildSpec(BuildSpec.fromSourceFilename("./love/buildspec.yml"))
+                .projectName("LoveProjectBuild")
                 .environment(BuildEnvironment.builder()
                     .computeType(ComputeType.SMALL)
                     .buildImage(LinuxBuildImage.STANDARD_2_0)
                     .build())
-                .role(new Role(this, "StaticLoveProjectRole", RoleProps.builder()
-                    .roleName("StaticLoveProjectRole")
+                .role(new Role(this, "LoveProjectRole", RoleProps.builder()
+                    .roleName("LoveProjectRole")
                     .assumedBy(new ServicePrincipal("codebuild.amazonaws.com"))
                     .managedPolicies(Collections.singletonList(ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess")))
                     .build()))
                 .build()))
-            .role(new Role(this, "StaticLoveBuildActionRole", RoleProps.builder()
-                .roleName("StaticLoveBuildActionRole")
+            .role(new Role(this, "LoveBuildActionRole", RoleProps.builder()
+                .roleName("LoveBuildActionRole")
                 .assumedBy(new AccountPrincipal(Aws.ACCOUNT_ID))
                 .build()))
             .build());
@@ -147,11 +85,11 @@ public class StaticLoveStack extends Stack {
             .actions(Collections.singletonList(codeBuildAction))
             .build();
 
-        new Pipeline(this, "StaticLovePipeline", PipelineProps.builder()
-            .pipelineName("StaticLove")
+        new Pipeline(this, "LovePipeline", PipelineProps.builder()
+            .pipelineName("Love")
             .stages(Arrays.asList(sourceStage, buildStage))
-            .role(new Role(this, "StaticLovePipelineRole", RoleProps.builder()
-                .roleName("StaticLovePipelineRole")
+            .role(new Role(this, "LovePipelineRole", RoleProps.builder()
+                .roleName("LovePipelineRole")
                 .assumedBy(new ServicePrincipal("codepipeline.amazonaws.com"))
                 .build()))
             .build()
