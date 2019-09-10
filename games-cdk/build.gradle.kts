@@ -4,19 +4,19 @@ plugins {
 }
 
 dependencies {
-    implementation("software.amazon.awscdk:core:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:ec2:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:ecs:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:ecs-patterns:1.7.0.DEVPREVIEW")
+    implementation("software.amazon.awscdk:core:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:ec2:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:ecs:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:ecs-patterns:${project.property("cdkVersion")}")
 
-    implementation("software.amazon.awscdk:iam:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:s3:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:sns:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:sns-subscriptions:1.7.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:sqs:1.7.0.DEVPREVIEW")
+    implementation("software.amazon.awscdk:iam:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:s3:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:sns:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:sns-subscriptions:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:sqs:${project.property("cdkVersion")}")
 
     // Use JUnit test framework
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:${project.property("junitVersion")}")
 }
 
 application {

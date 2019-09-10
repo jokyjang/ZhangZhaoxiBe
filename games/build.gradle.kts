@@ -1,15 +1,16 @@
 plugins {
     java
-    id("org.springframework.boot") version("2.1.6.RELEASE")
+    // TODO use property reference
+    id("org.springframework.boot") version("2.1.8.RELEASE")
     id("io.spring.dependency-management") version("1.0.8.RELEASE")
     id("com.palantir.docker") version("0.22.1")
 }
 
 dependencies {
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE"))
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:${project.property("springBootVersion")}"))
+    implementation("org.springframework.boot:spring-boot-starter-web:${project.property("springBootVersion")}")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${project.property("springBootVersion")}")
 }
 
 tasks.create<Copy>("unpack") {

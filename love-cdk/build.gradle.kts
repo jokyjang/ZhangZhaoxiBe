@@ -4,16 +4,16 @@ plugins {
 }
 
 dependencies {
-    implementation("software.amazon.awscdk:core:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:s3:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:route53:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:route53-targets:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:codepipeline:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:codebuild:1.6.0.DEVPREVIEW")
-    implementation("software.amazon.awscdk:codepipeline-actions:1.6.0.DEVPREVIEW")
+    implementation("software.amazon.awscdk:core:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:s3:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:route53:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:route53-targets:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:codepipeline:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:codebuild:${project.property("cdkVersion")}")
+    implementation("software.amazon.awscdk:codepipeline-actions:${project.property("cdkVersion")}")
 
     // Use Junit test framework
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:${project.property("junitVersion")}")
 }
 
 application {
