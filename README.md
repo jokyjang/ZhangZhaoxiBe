@@ -10,8 +10,10 @@ Personal project that applies AWS technologies for building web services or appl
   
 ## Project structures
 
-* cicd-cdk - CDK module for building the CI/CD pipelines for all the website.
-* love - Static website content to be hosted on Amazon S3 bucket.
-* love-cdk - CDK module for creating the infrastructure of the love website.
-* life - Lambda functions that are used as business logics for the OhLife web application.
-* life-cdk - CDK module for creating the infrastructure of the OhLife web application.
+* [cicd-cdk](cicd-cdk) - CDK module for building the CI/CD pipelines for all the website.
+* [love](love) - Static website content to be hosted on Amazon S3 bucket.
+* [love-cdk](love-cdk) - CDK module for creating the infrastructure of the love website.
+* [games](games) - ECS based services for games such as Kayles.
+* [games-cdk](games-cdk) - CDK module for building the service infrastructure of these games.
+* [life](life) - Lambda functions that are used as business logics for the OhLife web application.
+* [life-cdk](life-cdk) - CDK module for creating the infrastructure of the OhLife web application.

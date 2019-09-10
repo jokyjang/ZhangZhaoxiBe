@@ -1,3 +1,8 @@
 rootProject.name = "zhang-zhaoxi-be"
-include("static-love-cdk")
-include("static-love")
+include("love-cdk")
+include("love")
+include("games")
+include("games-cdk")
+include("life")
+include("life-cdk")
+include("cicd-cdk")
