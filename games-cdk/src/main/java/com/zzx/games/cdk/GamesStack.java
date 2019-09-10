@@ -5,6 +5,8 @@ import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.ec2.Vpc;
 import software.amazon.awscdk.services.ec2.VpcProps;
+import software.amazon.awscdk.services.ecr.Repository;
+import software.amazon.awscdk.services.ecr.RepositoryProps;
 import software.amazon.awscdk.services.ecs.Cluster;
 import software.amazon.awscdk.services.ecs.ClusterProps;
 import software.amazon.awscdk.services.ecs.ContainerImage;
@@ -32,6 +34,7 @@ public class GamesStack extends Stack {
 
     private void init() {
         Cluster cluster = createCluster();
+        createEcrRepository();
         LoadBalancedFargateService service = createLoadBalancedFargateService(cluster);
         createRoute53Record(service.getLoadBalancer());
     }
@@ -46,6 +49,8 @@ public class GamesStack extends Stack {
     private LoadBalancedFargateService createLoadBalancedFargateService(Cluster cluster) {
         return new LoadBalancedFargateService(this, "GamesFargateService", LoadBalancedFargateServiceProps.builder()
             .cluster(cluster)
+            // TODO figure out how to build docker image locally and deploy to ecr from here.
+//            .image(ContainerImage.fromEcrRepository(repository))
             .image(ContainerImage.fromRegistry("amazon/amazon-ecs-sample"))
             .publicLoadBalancer(true)
             .build());
@@ -60,5 +65,12 @@ public class GamesStack extends Stack {
             .target(RecordTarget.fromAlias(new LoadBalancerTarget((ILoadBalancerV2) loadBalancer)))
             .build()
         );
+    }
+
+    private void createEcrRepository() {
+        new Repository(this, "GamesEcrRepository", RepositoryProps.builder()
+            //TODO repository name should be some constant value that is shared by others
+            .repositoryName("games")
+            .build());
     }
 }
