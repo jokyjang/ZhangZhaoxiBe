@@ -6,4 +6,4 @@ phases:
       java: openjdk8
   build:
     commands:
-      - aws s3 cp ./static-love/src/main/resources s3://love.zhangzhaoxi.be --recursive
+      - aws s3 cp ./love/src/main/resources s3://love.zhangzhaoxi.be --recursive
