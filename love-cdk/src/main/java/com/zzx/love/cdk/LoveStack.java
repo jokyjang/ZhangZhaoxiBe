@@ -11,10 +11,13 @@ import software.amazon.awscdk.services.route53.ARecord;
 import software.amazon.awscdk.services.route53.ARecordProps;
 import software.amazon.awscdk.services.route53.HostedZone;
 import software.amazon.awscdk.services.route53.HostedZoneProviderProps;
+import software.amazon.awscdk.services.route53.IHostedZone;
 import software.amazon.awscdk.services.route53.RecordTarget;
 import software.amazon.awscdk.services.route53.targets.BucketWebsiteTarget;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketProps;
+import software.amazon.awscdk.services.s3.RedirectProtocol;
+import software.amazon.awscdk.services.s3.RedirectTarget;
 
 import java.util.Collections;
 
@@ -26,6 +29,7 @@ import java.util.Collections;
 public class LoveStack extends Stack {
     private static final String DOMAIN_NAME = "zhangzhaoxi.be";
     private static final String SUB_DOMAIN_NAME = "love." + DOMAIN_NAME;
+    private static final String WWW_SUB_DOMAIN_NAME = "www." + SUB_DOMAIN_NAME;
 
     public LoveStack(Construct parent, String id, StackProps props) {
         super(parent, id, props);
@@ -33,8 +37,9 @@ public class LoveStack extends Stack {
     }
 
     private void init() {
-        Bucket bucket = createStaticWebsiteBucket();
-        createRoute53Record(bucket);
+        Bucket hostBucket = createStaticWebsiteBucket();
+        Bucket wwwBucket = createWwwStaticWebsiteBucket(hostBucket);
+        createRoute53Records(hostBucket, wwwBucket);
     }
 
     private Bucket createStaticWebsiteBucket() {
@@ -62,18 +67,36 @@ public class LoveStack extends Stack {
         return bucket;
     }
 
-    private void createWwwStaticWebsiteBucket() {
-
+    private Bucket createWwwStaticWebsiteBucket(Bucket hostBucket) {
+        return new Bucket(
+            this,
+            "WwwStaticWebsiteBucket",
+            BucketProps.builder()
+                .bucketName(WWW_SUB_DOMAIN_NAME)
+                .websiteRedirect(RedirectTarget.builder()
+                    .hostName(hostBucket.getBucketName())
+                    // TODO enable HTTPS
+                    .protocol(RedirectProtocol.HTTP)
+                    .build())
+                .build()
+        );
     }
 
-    private void createRoute53Record(Bucket bucket) {
+    private void createRoute53Records(Bucket hostBucket, Bucket wwwBucket) {
+        IHostedZone hostedZone = HostedZone.fromLookup(this, "HostedZone", HostedZoneProviderProps.builder()
+            .domainName(DOMAIN_NAME)
+            .build()
+        );
         new ARecord(this, "LoveRecordSet", ARecordProps.builder()
-            .zone(HostedZone.fromLookup(this, "HostedZone", HostedZoneProviderProps.builder()
-                .domainName(DOMAIN_NAME)
-                .build()))
+            .zone(hostedZone)
             .recordName("love")
-            // TODO bug report at https://github.com/aws/aws-cdk/issues/3928
-            .target(RecordTarget.fromAlias(new BucketWebsiteTarget(bucket)))
+            .target(RecordTarget.fromAlias(new BucketWebsiteTarget(hostBucket)))
+            .build()
+        );
+        new ARecord(this, "LoveWwwRecordSet", ARecordProps.builder()
+            .zone(hostedZone)
+            .recordName("www.love")
+            .target(RecordTarget.fromAlias(new BucketWebsiteTarget(wwwBucket)))
             .build()
         );
     }
