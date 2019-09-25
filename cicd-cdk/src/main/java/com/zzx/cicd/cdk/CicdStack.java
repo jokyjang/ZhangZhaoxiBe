@@ -58,8 +58,9 @@ public class CicdStack extends Stack {
             .actions(Collections.singletonList(githubSourceAction))
             .build();
 
+        // Love Project actions and stage.
         IAction codeBuildAction = new CodeBuildAction(CodeBuildActionProps.builder()
-            .actionName("Build")
+            .actionName("LoveBuild")
             .input(Artifact.artifact("Source"))
             .project(new PipelineProject(this, "LoveProject", PipelineProjectProps.builder()
                 .buildSpec(BuildSpec.fromSourceFilename("./love/buildspec.yml"))
@@ -85,11 +86,11 @@ public class CicdStack extends Stack {
             .actions(Collections.singletonList(codeBuildAction))
             .build();
 
-        new Pipeline(this, "LovePipeline", PipelineProps.builder()
-            .pipelineName("Love")
+        new Pipeline(this, "ZhangZhaoxiBePipeline", PipelineProps.builder()
+            .pipelineName("ZhangZhaoxiBe")
             .stages(Arrays.asList(sourceStage, buildStage))
-            .role(new Role(this, "LovePipelineRole", RoleProps.builder()
-                .roleName("LovePipelineRole")
+            .role(new Role(this, "ZhangZhaoxiBePipelineRole", RoleProps.builder()
+                .roleName("ZhangZhaoxiBePipelineRole")
                 .assumedBy(new ServicePrincipal("codepipeline.amazonaws.com"))
                 .build()))
             .build()
