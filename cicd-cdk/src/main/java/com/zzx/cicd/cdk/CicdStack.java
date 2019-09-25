@@ -7,6 +7,8 @@ import software.amazon.awscdk.core.SecretsManagerSecretOptions;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.codebuild.BuildEnvironment;
+import software.amazon.awscdk.services.codebuild.BuildEnvironmentVariable;
+import software.amazon.awscdk.services.codebuild.BuildEnvironmentVariableType;
 import software.amazon.awscdk.services.codebuild.BuildSpec;
 import software.amazon.awscdk.services.codebuild.ComputeType;
 import software.amazon.awscdk.services.codebuild.LinuxBuildImage;
@@ -29,6 +31,7 @@ import software.amazon.awscdk.services.iam.ServicePrincipal;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class CicdStack extends Stack {
 
@@ -68,6 +71,14 @@ public class CicdStack extends Stack {
                 .environment(BuildEnvironment.builder()
                     .computeType(ComputeType.SMALL)
                     .buildImage(LinuxBuildImage.STANDARD_2_0)
+                    .environmentVariables(new HashMap<String, BuildEnvironmentVariable>() {{
+                        put("LOVA_BUCKET_NAME", BuildEnvironmentVariable.builder()
+                            .type(BuildEnvironmentVariableType.PLAINTEXT)
+                            // TODO Move these values to CloudFormation exported value
+                            .value("love.zhangzhaoxi.be")
+                            .build()
+                        );
+                    }})
                     .build())
                 .role(new Role(this, "LoveProjectRole", RoleProps.builder()
                     .roleName("LoveProjectRole")

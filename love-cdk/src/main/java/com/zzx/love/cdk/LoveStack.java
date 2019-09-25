@@ -1,6 +1,7 @@
 package com.zzx.love.cdk;
 
 import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.RemovalPolicy;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.iam.AnyPrincipal;
@@ -73,6 +74,7 @@ public class LoveStack extends Stack {
             "WwwStaticWebsiteBucket",
             BucketProps.builder()
                 .bucketName(WWW_SUB_DOMAIN_NAME)
+                .removalPolicy(RemovalPolicy.DESTROY)
                 .websiteRedirect(RedirectTarget.builder()
                     .hostName(hostBucket.getBucketName())
                     // TODO enable HTTPS
