@@ -13,24 +13,15 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:${project.property("springBootVersion")}")
 }
 
-tasks.create<Copy>("unpack") {
-    dependsOn("bootJar")
-    description = "Copied sources to the dest directory"
-    group = "Custom"
-    from(zipTree(tasks.getByName("bootJar").outputs.files.singleFile))
-    into("build/dependency")
-}
-
 tasks {
-    val output = this.getByName("unpack").outputs
-
     bootJar {
         mainClassName = "com.zzx.games.App"
     }
 
     docker {
-        name = "${project.group}/springboot"
-        copySpec.from(output).into("dependency")
-        buildArgs(mapOf("DEPENDENCY" to "dependency"))
+        name = "${project.group}/${project.name}"
+        val outputFile = getByName("bootJar").outputs.files.singleFile
+        copySpec.from(outputFile).into(".")
+        buildArgs(mapOf("BOOT_JAR" to outputFile.name))
     }
 }
