@@ -9,6 +9,10 @@ plugins {
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:${project.property("springBootVersion")}"))
     implementation("org.springframework.boot:spring-boot-starter-web:${project.property("springBootVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf:${project.property("springBootVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-security:${project.property("springBootVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${project.property("springBootVersion")}")
+    implementation("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:${project.property("springBootVersion")}")
 }
