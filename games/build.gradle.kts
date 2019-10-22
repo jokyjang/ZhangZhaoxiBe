@@ -15,6 +15,9 @@ dependencies {
     implementation("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:${project.property("springBootVersion")}")
+    testImplementation("io.rest-assured:rest-assured:${project.property("restAssuredVersion")}")
+    testImplementation("io.rest-assured:json-path:${project.property("restAssuredVersion")}")
+    testImplementation("io.rest-assured:xml-path:${project.property("restAssuredVersion")}")
 }
 
 tasks {
