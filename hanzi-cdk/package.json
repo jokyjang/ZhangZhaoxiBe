@@ -1,0 +1,15 @@
+{
+  "name": "hanzi-cdk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "synth": "tsx bin/hanzi.ts",
+    "check": "tsc --noEmit",
+    "test": "tsx --test test/hanzi-stack.test.ts",
+    "deploy": "node scripts/deploy.mjs"
+  },
+  "dependencies": { "aws-cdk-lib": "2.269.0", "constructs": "10.5.0" },
+  "devDependencies": { "@types/node": "22.19.19", "tsx": "4.23.13", "typescript": "5.9.3" }
+}

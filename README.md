@@ -10,6 +10,9 @@ Personal project that applies AWS technologies for building web services or appl
   
 ## Project structures
 
+* [hanzi](hanzi) - Interactive Xinzhongwen atlas at [hanzi.zhangzhaoxi.be](https://hanzi.zhangzhaoxi.be), with all application source and the official 3,500-character dataset.
+* [hanzi-cdk](hanzi-cdk) - CDK v2 infrastructure and deployment for private S3, CloudFront HTTPS and Route 53.
+
 * [cicd-cdk](cicd-cdk) - CDK module for building the CI/CD pipelines for all the website.
 * [love](love) - Static website content to be hosted on Amazon S3 bucket.
 * [love-cdk](love-cdk) - CDK module for creating the infrastructure of the love website.
