@@ -46,6 +46,7 @@ CloudFront and Route 53; the initial ACM certificate already exists.
 npm run check
 npm test
 npm run synth
+npm run verify
 curl -I https://hanzi.zhangzhaoxi.be
 curl -I http://hanzi.zhangzhaoxi.be
 ```
